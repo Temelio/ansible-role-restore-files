@@ -1,0 +1,89 @@
+---
+
+# Tasks file for restore-files
+
+- name : Create destination folder if needed
+  file :
+    dest : "{{ restore_files_script_destination }}"
+    state : directory
+    mode  : "{{ restore_files_script_mode }}"
+    owner : "{{ restore_files_script_owner }}"
+    group : "{{ restore_files_script_group }}"
+
+
+- name : Deploy restore script
+  template :
+    src   : "{{ role_path }}/templates/restore-files.sh"
+    dest  : "{{ restore_files_script_destination }}/"
+    mode  : "{{ restore_files_script_mode }}"
+    owner : "{{ restore_files_script_owner }}"
+    group : "{{ restore_files_script_group }}"
+
+
+- name : Deploy crontabs tasks
+  cron :
+    cron_file : "{{ item.cron.cronfile }}"
+    name      : "{{ item.cron.name }}"
+    job       : >
+      {{ restore_files_script_destination }}/restore-files.sh
+      ${BACKUP_DIR}
+      ${SQL_DATABASES}
+      ${FILES}
+    user      : "{{ item.cron.user      | default('root') }}"
+    minute    : "{{ item.cron.minute    | default('10')    }}"
+    hour      : "{{ item.cron.hour      | default('23')   }}"
+    day       : "{{ item.cron.month_day | default('*')    }}"
+    month     : "{{ item.cron.month     | default('*')    }}"
+    weekday   : "{{ item.cron.week_day  | default('*')    }}"
+    state     : present
+  with_items : restore_files_tasks
+
+
+- name : Deploy crontabs SQL vars
+  lineinfile :
+    dest : "/etc/cron.d/{{ item.cron.cronfile }}"
+    line     : >
+        SQL_DATABASES=-m -c {{ credential_file }}
+        -d {{ item.sql.mysql_databases | join(' -d ') }}
+    insertbefore : restore-files.sh
+  with_items : restore_files_tasks
+  when :
+    - item.sql.do_mysql_restore == True
+    - item.sql.mysql_databases
+
+
+- name : Deploy crontabs FILES vars with clean folder
+  lineinfile :
+    dest : "/etc/cron.d/{{ item.cron.cronfile }}"
+    line : >
+        FILES=-D
+        -f {{ item.files.files_list | join(' -f ') }}
+        -g {{ item.files.files_group }}
+        -u {{ item.files.files_owner }}
+    insertbefore : restore-files.sh
+  with_items : restore_files_tasks
+  when :
+    - item.files.files_list
+    - item.files.do_clean_folder
+
+
+- name : Deploy crontabs FILES vars without recurse
+  lineinfile :
+    dest : "/etc/cron.d/{{ item.cron.cronfile }}"
+    line : >
+        FILES=-f {{ item.files.files_list | join(' -f ') }}
+        -g {{ item.files.files_group }}
+        -u {{ item.files.files_owner }}
+    insertbefore : restore-files.sh
+  with_items : restore_files_tasks
+  when :
+    - item.files.files_list
+    - item.files.do_clean_folder == False
+
+
+- name : Deploy crontabs BACKUP_DIR var
+  lineinfile :
+    dest : "/etc/cron.d/{{ item.cron.cronfile }}"
+    line : "BACKUP_DIR=-p {{ item.backup_directory }}"
+    insertbefore : restore-files.sh
+  with_items : restore_files_tasks

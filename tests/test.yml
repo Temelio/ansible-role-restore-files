@@ -1,0 +1,33 @@
+---
+
+# Tests for restore-files role
+
+- hosts: localhost
+  remote_user: root
+  vars :
+    archive_files_tasks :
+      - cron :
+          name : "coucocu"
+          cronfile : "foo-restore"
+          user      : "root"
+          minute    : 0
+          hour      : 23
+          month_day : "*"
+          month     : "*"
+          week_day  : "*"
+        backup_directory : "qsdqsdqsd"
+        sql  :
+          credential_file  : "/root/.mysql.cnf"
+          do_mysql_restore : False
+          mysql_databases  :
+            - a
+            - b
+        files :
+          do_clean_folder : False
+          files_owner     : root
+          files_group     : root
+          files_list      :
+            - foo
+            - bar
+  roles:
+    - ansible-role-restore-files
