@@ -8,6 +8,7 @@ readonly SCRIPT_NAME=$(basename $0)
 MAIN_LOG_FILE="{{ restore_files_main_log_file }}"
 ERROR_LOG_FILE="{{ restore_files_error_log_file }}"
 
+{% raw %}
 trap 'exec 2>&4 1>&3' 0 1 2 3
 exec 3>&1 4>&2
 exec > >(tee -ia "${MAIN_LOG_FILE}")
@@ -232,3 +233,4 @@ fi
 log '#-------------------------'
 log "Script ended successfully"
 log '#-------------------------'
+{% endraw %}
