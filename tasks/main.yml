@@ -43,7 +43,7 @@
   lineinfile :
     dest : "/etc/cron.d/{{ item.cron.cronfile }}"
     line     : >
-        SQL_DATABASES=-m -c {{ credential_file }}
+        SQL_DATABASES=-m -c {{ item.sql.credential_file }}
         -d {{ item.sql.mysql_databases | join(' -d ') }}
     insertbefore : restore-files.sh
   with_items : restore_files_tasks
