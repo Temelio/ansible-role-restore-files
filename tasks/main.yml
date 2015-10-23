@@ -67,7 +67,7 @@
     - item.files.do_clean_folder
 
 
-- name : Deploy crontabs FILES vars without recurse
+- name : Deploy crontabs FILES vars without clean folder
   lineinfile :
     dest : "/etc/cron.d/{{ item.cron.cronfile }}"
     line : >
