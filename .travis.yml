@@ -11,7 +11,7 @@ before_install:
 
 install:
   # Install Ansible v2.
-  - sudo pip install paramiko PyYAML Jinja2 httplib2 six
+  - pip install paramiko PyYAML Jinja2 httplib2 six
   - git clone git://github.com/ansible/ansible.git --recursive
   - cd ansible
   - git checkout devel
