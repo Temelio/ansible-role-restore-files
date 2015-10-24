@@ -43,7 +43,7 @@
   cronvar :
     cron_file : "{{ item.cron.cronfile }}"
     name      : "SQL_DATABASES"
-    value     : "-m -c {{ credential_file }} -d {{ item.sql.mysql_databases | join(' -d ') }}"
+    value     : "-m -c {{ item.sql.credential_file }} -d {{ item.sql.mysql_databases | join(' -d ') }}"
   with_items : restore_files_tasks
   when :
     - item.sql.do_mysql_restore == True
@@ -61,7 +61,7 @@
     - item.files.do_clean_folder
 
 
-- name : Deploy crontabs FILES vars without recurse
+- name : Deploy crontabs FILES vars without clean folder
   cronvar :
     cron_file : "{{ item.cron.cronfile }}"
     name      : "FILES"
