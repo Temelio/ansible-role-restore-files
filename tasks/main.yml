@@ -41,7 +41,7 @@
 
 - name : Deploy crontabs SQL vars
   cronvar :
-    cron_file : "/etc/cron.d/{{ item.cron.cronfile }}"
+    cron_file : "{{ item.cron.cronfile }}"
     name      : "SQL_DATABASES"
     value     : "-m -c {{ credential_file }} -d {{ item.sql.mysql_databases | join(' -d ') }}"
   with_items : restore_files_tasks
@@ -52,7 +52,7 @@
 
 - name : Deploy crontabs FILES vars with clean folder
   cronvar :
-    cron_file : "/etc/cron.d/{{ item.cron.cronfile }}"
+    cron_file : "{{ item.cron.cronfile }}"
     name      : "FILES"
     value     : "-D -f {{ item.files.files_list | join(' -f ') }} -g {{ item.files.files_group }} -u {{ item.files.files_owner }}"
   with_items : restore_files_tasks
@@ -63,7 +63,7 @@
 
 - name : Deploy crontabs FILES vars without recurse
   cronvar :
-    cron_file : "/etc/cron.d/{{ item.cron.cronfile }}"
+    cron_file : "{{ item.cron.cronfile }}"
     name      : "FILES"
     value     : "-f {{ item.files.files_list | join(' -f ') }} -g {{ item.files.files_group }} -u {{ item.files.files_owner }}"
   with_items : restore_files_tasks
@@ -74,7 +74,7 @@
 
 - name : Deploy crontabs BACKUP_DIR var
   cronvar :
-    cron_file : "/etc/cron.d/{{ item.cron.cronfile }}"
+    cron_file : "{{ item.cron.cronfile }}"
     name      : "BACKUP_DIR"
     value     : "-p {{ item.backup_directory }}"
   with_items : restore_files_tasks
