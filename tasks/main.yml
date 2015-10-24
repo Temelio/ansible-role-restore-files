@@ -61,7 +61,7 @@
     - item.files.do_clean_folder
 
 
-- name : Deploy crontabs FILES vars without recurse
+- name : Deploy crontabs FILES vars without clean folder
   cronvar :
     cron_file : "{{ item.cron.cronfile }}"
     name      : "FILES"
