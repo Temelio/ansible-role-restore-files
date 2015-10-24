@@ -15,6 +15,7 @@ install:
   - cd ansible
   - git checkout devel
   - source ./hacking/env-setup
+  - cd ..
 
   # Add ansible.cfg to pick up roles path.
   - cp ./tests/ansible.cfg ./
